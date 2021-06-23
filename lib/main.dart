@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:io';
 
 void main() => runApp(MyApp());
 
@@ -36,19 +37,19 @@ class MyHomePage extends StatefulWidget {
 // }
 
 class _MyHomePageState extends State<MyHomePage> {
-  //int _counter = 0;
 
-  // void _incrementCounter() {
-  //   setState(() {
-  //     // This call to setState tells the Flutter framework that something has
-  //     // changed in this State, which causes it to rerun the build method below
-  //     // so that the display can reflect the updated values. If we changed
-  //     // _counter without calling setState(), then the build method would not be
-  //     // called again, and so nothing would appear to happen.
-  //     _counter++;
-  //   });
-  // }
+  File _image;
+  final picker = ImagePicker();
 
+  Future getImage() async {
+    final pickedFile = await picker.getImage(source: ImageSource.camera);
+
+    setState(() {
+      if (pickedFile != null) {
+        _image = File(pickedFile.path);
+      }
+    });
+  }
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -64,7 +65,9 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text('Image Picker Sample'),
       ),
       body: Center(
-        child: Text('No image selected.'),
+        child: _image == null
+            ? Text('No image selected.')
+            : Image.file(_image),
       ),
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
@@ -97,7 +100,7 @@ class _MyHomePageState extends State<MyHomePage> {
         // ),
       //),
     floatingActionButton: FloatingActionButton(
-        //onPressed: _incrementCounter,
+        onPressed: getImage,
         //tooltip: 'Increment',
         child: Icon(Icons.add_a_photo),
       ), // This trailing comma makes auto-formatting nicer for build methods.
